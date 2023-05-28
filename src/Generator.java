@@ -139,7 +139,7 @@ public class Generator{
         Generator g = new Generator();
         Locale.setDefault(Locale.US);
         
-        int TAM = 20;
+        int TAM = 6;
         long tempoInicial = System. currentTimeMillis();        
         g.geraArquivo(TAM);
         long tempoFinal = System. currentTimeMillis();

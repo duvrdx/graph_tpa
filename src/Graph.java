@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -162,6 +163,77 @@ public class Graph<T>{
 
         // Ao fim do programa retornamos o HashMap
         return wheightsMap;
+    }
+
+    /*
+     * getMST --> Retorna um grafo contendo a Árvore Geradora Mínima
+    */
+    public Graph<T> getMST(){
+        Integer origin[] = new Integer[this.verticesNum];
+        float wheight[] = new float[this.verticesNum];
+        Boolean mstSet[] = new Boolean[this.verticesNum];
+        Graph<T> graph = new Graph<T>(verticesNum);
+
+        // Preenche os arrays com valores "infinitos" e falsos para que 
+        // nossas comparações ocorram corretamente
+        Arrays.fill(wheight, 999999999); 
+        Arrays.fill(mstSet, false);
+
+        // Setamos a chave do vértice 0 como 0 para que possamos iniciar com ele
+        // e setamos sua origem como -1 já que ele é o primeiro
+        wheight[0] = 0;
+        origin[0] = -1;
+
+        // Entramos em um laço de repetição para percorremos os vertices
+        for(int count = 0; count < this.verticesNum - 1; count++){
+
+            // Buscamos o índice de menor chave com nossa função privada
+            // e setamos esse índice como true para marcarmos que 
+            // ele já esta presente na nossa árvore
+            Integer u = getMinWheight(wheight, mstSet);
+            mstSet[u] = true;
+
+            // Entramos em mais um laço de repeticação iterando sobre o número de vertices
+            for (int v = 0; v < this.verticesNum; v++) {
+                // Verificamos primeiro se existe uma aresta entre os vértices,
+                // em seguida garantimos que o vértice não está na nossa árvore geradora mínima e
+                // que o peso da aresta entre os dois vértices é menor que o peso associado ao vertice v
+                if (getEdges()[u][v] != 0 && !mstSet[v] && getEdges()[u][v] < wheight[v]) {
+                    origin[v] = u; // Define o vértice u como pai do vértice v
+                    wheight[v] = getEdges()[u][v]; // Atualiza a chave do vértice v
+                }
+            }
+
+        }
+        
+        // Laço de repetição preenchendo um grafo contendo a árvore geradora minima
+        for (int i = 1; i < this.verticesNum; i++){
+            graph.addEdge(getVertice(origin[i]).getValue(), getVertice(i).getValue(), getEdges()[i][origin[i]]);
+        }
+        
+        // Retorno do grafo com a árvore geradora minima
+        return graph;
+    }
+
+    // getMinwheight --> Retorna o índice do menor peso que ainda não foi visitada
+    private Integer getMinWheight(float wheight[], Boolean mstSet[]){
+        float min = 999999999;
+        Integer minIndex = -1;
+
+        // Percorre todos os vértices
+        for(int v = 0; v < this.verticesNum; v++){
+            // Verifica se o vértice não está na árvore geradora minima e
+            // se o peso dele é o menor que o minimo
+            // - Caso verdadeiro: Setamos um novo minimo e o índice do valor minimo
+            // - Caso não seja: Não fazemos nada
+            if(!mstSet[v] && wheight[v] < min){
+                min = wheight[v];
+                minIndex = v;
+            }
+        }
+
+        // Ao fim do programa retornamos o índice do menor peso encontrado
+        return minIndex;
     }
 
     // printAdjacencyMatrix --> Imprime a matriz de adjacencias do grafo

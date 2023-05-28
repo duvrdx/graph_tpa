@@ -39,7 +39,7 @@ public class App {
         System.out.println("\033[1m" +"\033[31m" + "==================================================================================+++---");
         System.out.println("Escolha uma das opções abaixo");
         System.out.println("==================================================================================+++---");
-        System.out.println("\033[0;0m1. Obter cidades vizinhas | 2. Obter todos os caminhos | 3. Sair");
+        System.out.println("\033[0;0m1. Obter cidades vizinhas | 2. Obter todos os caminhos | 3. Obter Árvore Geradora Mínima\n4. Sair");
     }
 
     public static void printLogo(){
@@ -77,15 +77,16 @@ public class App {
 
             switch(scanner.nextInt()){
                 case 1:
+
                     System.out.println("Digite o codigo da cidade:\n");
                     inputId = scanner.nextInt();
                     clearTerminal();
-
+                
                     if(inputId <= graph.getVerticesNum()){
-                        System.out.println("Vizinhos de " + graph.getVertice(inputId-1).getValue() + ":");
-                        System.out.println(controller.getNeighborhoodString(inputId));
+                        System.out.println("\033[1m" + "Vizinhos de " + graph.getVertice(inputId-1).getValue() + ":\n");
+                        System.out.println("\033[0;0m\033[31m" +  controller.getNeighborhoodString(inputId) + "\033[0;0m");
                     }else{
-                        System.out.println("Esse código de cidade não existe!");
+                        System.out.println("\033[0;0m\033[31m" +"Esse código de cidade não existe!" + "\033[0;0m");
                     }
                     
                     scanner.nextLine();
@@ -96,15 +97,15 @@ public class App {
 
                 case 2:
 
-                    System.out.println("Digite o codigo da cidade:\n");
+                    System.out.println("\033[1m" + "Digite o codigo da cidade:\n");
                     inputId = scanner.nextInt();
                     clearTerminal();
 
                     if(inputId <= graph.getVerticesNum()){
-                        System.out.println("Caminhos a partir de " + graph.getVertice(inputId-1).getValue() + ":");
-                        System.out.println(controller.getBreadthFirstSearch(inputId));
+                        System.out.println("\033[1m" + "Caminhos a partir de " + graph.getVertice(inputId-1).getValue() + ":\n");
+                        System.out.println("\033[0;0m\033[31m" + controller.getBreadthFirstSearch(inputId) + "\033[0;0m");
                     }else{
-                        System.out.println("Esse código de cidade não existe!");
+                        System.out.println("\033[0;0m\033[31m" + "Esse código de cidade não existe!" + "\033[0;0m");
                     }
                     
                     scanner.nextLine();
@@ -113,8 +114,18 @@ public class App {
                     break;
 
                 case 3:
+                    clearTerminal();
+                    System.out.println("\033[1m" + "Árvore Geradora Mínima do Grafo com " + graph.getVerticesNum() + " itens:\n");
+                    System.out.println("\033[0;0m\033[31m" + controller.getMinimumSpanningTree() + "\033[0;0m");
+                    scanner.nextLine();
+                    scanner.nextLine();
+                    clearTerminal();
+                    break;
+
+                case 4:
                     isRunning = false;
                     scanner.close();
+                    clearTerminal();
                     break;
                 default:
                     break;

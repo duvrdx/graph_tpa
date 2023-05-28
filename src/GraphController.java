@@ -40,5 +40,29 @@ public class GraphController<T>{
 
         return output;
     }
+    
+    /*
+     * getBreadthFirstSearch --> Retorna uma string formatada para ser impressa, a partir de um índice
+    */
+    public String getMinimumSpanningTree(){
+        // Instanciamos um grafo contendo a árvore geradora minima
+        Graph<T> mstGraph = graph.getMST();
+        String output = "";
+        String originDestination = "";
+
+        // Percorremos o grafo adicionando à string apenas onde existem aresta
+        // ou seja, o peso sendo maior que 0
+        for(int i = 0; i < graph.getVerticesNum(); i++){
+            for(int j = 0; j < graph.getVerticesNum(); j++){
+                if(mstGraph.getEdges()[i][j] > 0){
+                    originDestination = mstGraph.getVertice(i).getValue() +" --> "+ mstGraph.getVertice(j).getValue();
+                    output += String.format("%-50s | Wheight: %.2f\n", originDestination, mstGraph.getEdges()[i][j]);
+                }
+            }
+            
+        }
+        return output;
+    }
+    
 
 }
