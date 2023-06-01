@@ -26,7 +26,7 @@ public class App {
                 line = buffer.readLine();
                 String[] fields = line.split(",");
                 for(int j = 0; j < length; j++){
-                    graph.addEdge(graph.getVertice(i).getValue(), graph.getVertice(j).getValue(), Float.parseFloat(fields[j]));
+                    graph.addEdge(graph.getVertices().get(i).getValue(), graph.getVertices().get(j).getValue(), Float.parseFloat(fields[j]));
                 }
             }
             return graph;           
@@ -69,7 +69,8 @@ public class App {
         Boolean isRunning = true;
         Graph<City> graph = readFromFile(path);
         GraphController<City> controller = new GraphController<City>(graph);
-        Integer inputId;
+        Integer input;
+        City dummieCity;
 
         while(isRunning){
             App.printOptions();
@@ -79,12 +80,14 @@ public class App {
                 case 1:
 
                     System.out.println("Digite o codigo da cidade:\n");
-                    inputId = scanner.nextInt();
+                    input = scanner.nextInt();
                     clearTerminal();
+
+                    dummieCity = new City(input, "Dummie");
                 
-                    if(inputId <= graph.getVerticesNum()){
-                        System.out.println("\033[1m" + "Vizinhos de " + graph.getVertice(inputId-1).getValue() + ":\n");
-                        System.out.println("\033[0;0m\033[31m" +  controller.getNeighborhoodString(inputId) + "\033[0;0m");
+                    if(input <= graph.getVerticesNum()){
+                        System.out.println("\033[1m" + "Vizinhos de " + graph.getVertice(dummieCity).getValue() + ":\n");
+                        System.out.println("\033[0;0m\033[31m" +  controller.getNeighborhoodString(dummieCity) + "\033[0;0m");
                     }else{
                         System.out.println("\033[0;0m\033[31m" +"Esse código de cidade não existe!" + "\033[0;0m");
                     }
@@ -98,12 +101,14 @@ public class App {
                 case 2:
 
                     System.out.println("\033[1m" + "Digite o codigo da cidade:\n");
-                    inputId = scanner.nextInt();
+                    input = scanner.nextInt();
                     clearTerminal();
 
-                    if(inputId <= graph.getVerticesNum()){
-                        System.out.println("\033[1m" + "Caminhos a partir de " + graph.getVertice(inputId-1).getValue() + ":\n");
-                        System.out.println("\033[0;0m\033[31m" + controller.getBreadthFirstSearch(inputId) + "\033[0;0m");
+                    dummieCity = new City(input, "Dummie");
+
+                    if(input <= graph.getVerticesNum()){
+                        System.out.println("\033[1m" + "Caminhos a partir de " + graph.getVertice(dummieCity).getValue() + ":\n");
+                        System.out.println("\033[0;0m\033[31m" + controller.getBreadthFirstSearch(dummieCity) + "\033[0;0m");
                     }else{
                         System.out.println("\033[0;0m\033[31m" + "Esse código de cidade não existe!" + "\033[0;0m");
                     }

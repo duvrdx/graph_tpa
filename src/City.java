@@ -24,6 +24,19 @@ public class City {
     }
 
     public String toString(){
-        return name;
+        return String.format(name);
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(this == o) {
+            return true;
+        }
+
+        if(!(o instanceof City)) {
+            return false;
+        }
+
+        return this.code.equals(((City) o).getCode());
     }
 }

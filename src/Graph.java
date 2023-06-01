@@ -86,11 +86,11 @@ public class Graph<T>{
     /*
      * breadthFirstSearch --> Retorna uma lista contendo o resultado de uma busca em largura a partir de um vértice
     */
-    public List<T> breadthFirstSearch(Integer verticeId){
+    public List<T> breadthFirstSearch(T value){
         boolean marked[] = new boolean[this.verticesNum];
         List<T> itensList = new ArrayList<T>();
         List<Integer> queue = new ArrayList<Integer>();
-        Integer current = verticeId;
+        Integer current = getVerticeIndex(value);
 
         // Utilizamos uma fila adicionando o índice de entrada
         queue.add(current);
@@ -128,7 +128,7 @@ public class Graph<T>{
     /*
      * getNeighborhoodList --> Retorna uma lista contendo a "vizinhança", a função retorna apenas o índice dos vértices
     */
-    public List<Integer> getNeighborhoodList(Integer edgeId){
+    public List<Integer> getNeighborhoodList(T value){
         List<Integer> idList = new ArrayList<Integer>();
         
         // Laço de repetição que itera sobre j enquanto o mesmo é menor que 
@@ -138,7 +138,7 @@ public class Graph<T>{
             // e realizamos a verificação se o peso associado é maior que zero:
             // - Caso seja maior: Adicionamos o índice à lista
             // - Caso não seja: Não fazemos nada
-            if(edges[edgeId][j] > 0) idList.add(j);
+            if(edges[getVerticeIndex(value)][j] > 0) idList.add(j);
         }
 
         // Ao fim do programa retornamos a lista
@@ -148,7 +148,7 @@ public class Graph<T>{
     /*
      * getWheightsMap --> Retorna um HashMap contendo a "vizinhança" tendo o índice como chave e o peso como valor associado 
     */
-    public Map<Integer, Float> getWheightsMap(Integer edgeId){
+    public Map<Integer, Float> getWheightsMap(T value){
         Map<Integer, Float> wheightsMap = new HashMap<Integer, Float>();
 
         // Laço de repetição que itera sobre j enquanto o mesmo é menor que 
@@ -158,7 +158,7 @@ public class Graph<T>{
             // e realizamos a verificação se o peso associado é maior que zero:
             // - Caso seja maior: Adicionamos um novo item ao nosso HashMap
             // - Caso não seja: Não fazemos nada
-            if(edges[edgeId][j] > 0) wheightsMap.put(j, edges[edgeId][j]);
+            if(edges[getVerticeIndex(value)][j] > 0) wheightsMap.put(j, edges[getVerticeIndex(value)][j]);
         }
 
         // Ao fim do programa retornamos o HashMap
@@ -208,7 +208,7 @@ public class Graph<T>{
         
         // Laço de repetição preenchendo um grafo contendo a árvore geradora minima
         for (int i = 1; i < this.verticesNum; i++){
-            graph.addEdge(getVertice(origin[i]).getValue(), getVertice(i).getValue(), getEdges()[i][origin[i]]);
+            graph.addEdge(vertices.get(origin[i]).getValue(), vertices.get(i).getValue(), getEdges()[i][origin[i]]);
         }
         
         // Retorno do grafo com a árvore geradora minima
@@ -293,6 +293,18 @@ public class Graph<T>{
     }
 
     /*
+     * getVertice --> Retornamos o vértice a partir de um valor
+     */  
+    public Vertice<T> getVertice(T value){
+        // Iteramos sobre nossa lista de vértices comparando com o valor de entrada
+        for(Vertice<T> item : vertices){
+            if(item.getValue().equals(value)) return item;
+        }
+
+        return null;
+    }
+
+    /*
      * Getters & Setters --> Retornam e Modificam atributos gerais da nossa classe
      */    
 	public List<Vertice<T>> getVertices() {
@@ -319,8 +331,5 @@ public class Graph<T>{
 		this.verticesNum = verticesNum;
 	}
 
-    public Vertice<T> getVertice(Integer verticeId){
-        return vertices.get(verticeId);
-    }
     
 }
