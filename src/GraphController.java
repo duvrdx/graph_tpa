@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class GraphController<T>{
@@ -40,6 +41,22 @@ public class GraphController<T>{
 
         return output;
     }
+
+    /*
+     * getMinPath --> Retorna uma string formatada para ser impressa, a partir de um caminho mínimo
+    */
+    public String getMinPath(List<T> minPath){
+        // Iteramos sobre nossa lista de caminho minimo adicionando os destinos a nossa string
+        String output = "";
+
+        for(int i = 0; i < minPath.size(); i++){
+            if(i != minPath.size() - 1) output += minPath.get(i) + " --> ";
+            else output += minPath.get(i);
+            
+        }
+
+        return output;
+    }
     
     /*
      * getBreadthFirstSearch --> Retorna uma string formatada para ser impressa, a partir de um índice
@@ -49,7 +66,7 @@ public class GraphController<T>{
         Graph<T> mstGraph = graph.getMST();
         String output = "";
         String originDestination = "";
-        float totalWheight = 0;
+        float totalWheigt = 0;
         T currentOrigin, currentDestination;
 
         // Percorremos o grafo adicionando à string apenas onde existem aresta
@@ -61,14 +78,14 @@ public class GraphController<T>{
                     currentDestination = mstGraph.getVertices().get(j).getValue();
 
                     originDestination = currentOrigin +" --> "+ currentDestination;
-                    output += String.format("%-50s | Wheight: %.2f\n", originDestination, mstGraph.getEdges()[i][j]);
-                    totalWheight += mstGraph.getEdges()[i][j];
+                    output += String.format("%-50s | Wheigt: %.2f\n", originDestination, mstGraph.getEdges()[i][j]);
+                    totalWheigt += mstGraph.getEdges()[i][j];
                 }
             }
         }
         // Adicionando peso total
         output += "-----------------------------------------------------------------++>\n";
-        output += String.format("Total Wheight: %.2f\n", totalWheight);
+        output += String.format("Total Wheigt: %.2f\n", totalWheigt/2);
         return output;
     }
     

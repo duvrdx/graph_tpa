@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class App {
@@ -39,7 +41,7 @@ public class App {
         System.out.println("\033[1m" +"\033[31m" + "==================================================================================+++---");
         System.out.println("Escolha uma das opções abaixo");
         System.out.println("==================================================================================+++---");
-        System.out.println("\033[0;0m1. Obter cidades vizinhas | 2. Obter todos os caminhos | 3. Obter Árvore Geradora Mínima\n4. Sair");
+        System.out.println("\033[0;0m1. Obter cidades vizinhas\t\t\t| 2. Obter todos os caminhos\n3. Obter Árvore Geradora Mínima\t\t\t| 4. Caminho mínimo entre duas cidades\n5. Caminho mínimo entre duas cidades (AGM)\t| 6. Sair");
     }
 
     public static void printLogo(){
@@ -70,7 +72,7 @@ public class App {
         Graph<City> graph = readFromFile(path);
         GraphController<City> controller = new GraphController<City>(graph);
         Integer input;
-        City dummieCity;
+        City dummieCity, dummieCityOrigin, dummieCityDestination;
 
         while(isRunning){
             App.printOptions();
@@ -126,8 +128,69 @@ public class App {
                     scanner.nextLine();
                     clearTerminal();
                     break;
-
+                
                 case 4:
+                    System.out.println("\033[1m" + "Digite o codigo da cidade de saída:\n");
+                    input = scanner.nextInt();
+                    clearTerminal();
+                    dummieCityOrigin = new City(input, "Dummie");
+
+                    System.out.println("\033[1m" + "Digite o codigo da cidade de Destino:\n");
+                    input = scanner.nextInt();
+                    clearTerminal();
+                    dummieCityDestination = new City(input, "Dummie");
+
+                    if(dummieCityOrigin.getCode() > graph.getVerticesNum() || dummieCityDestination.getCode() > graph.getVerticesNum()){
+                        System.out.println("\033[0;0m\033[31m" + "Você digitou um código inválido!" + "\033[0;0m");
+                        scanner.nextLine();
+                        scanner.nextLine();
+                        clearTerminal();
+                        break;
+                    }
+
+                    HashMap<City, City> preds = graph.getDijkstra(dummieCityOrigin);
+                    ArrayList<City> minPath = graph.minPath(preds, dummieCityOrigin, dummieCityDestination);
+                
+                    System.out.println("Caminhho mínimo ----------------------+++");
+                    System.out.println("\033[0;0m\033[31m" + controller.getMinPath(minPath) + "\033[0;0m");
+
+                    scanner.nextLine();
+                    scanner.nextLine();
+                    clearTerminal();
+                    break;
+
+                case 5:
+                    System.out.println("\033[1m" + "Digite o codigo da cidade de saída:\n");
+                    input = scanner.nextInt();
+                    clearTerminal();
+                    dummieCityOrigin = new City(input, "Dummie");
+
+                    System.out.println("\033[1m" + "Digite o codigo da cidade de Destino:\n");
+                    input = scanner.nextInt();
+                    clearTerminal();
+                    dummieCityDestination = new City(input, "Dummie");
+
+                    if(dummieCityOrigin.getCode() > graph.getVerticesNum() || dummieCityDestination.getCode() > graph.getVerticesNum()){
+                        System.out.println("\033[0;0m\033[31m" + "Você digitou um código inválido!" + "\033[0;0m");
+                        scanner.nextLine();
+                        scanner.nextLine();
+                        clearTerminal();
+                        break;
+                    }
+
+                    HashMap<City, City> predsMST = graph.getMST().getDijkstra(dummieCityOrigin);
+                    ArrayList<City> minPathMST = graph.getMST().minPath(predsMST, dummieCityOrigin, dummieCityDestination);
+                
+                    System.out.println("Caminhho mínimo ----------------------+++");
+                    System.out.println("\033[0;0m\033[31m" + controller.getMinPath(minPathMST) + "\033[0;0m");
+
+                    scanner.nextLine();
+                    scanner.nextLine();
+                    clearTerminal();
+                    break;
+
+
+                case 6:
                     isRunning = false;
                     scanner.close();
                     clearTerminal();
