@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,7 @@ public class Graph<T>{
     /*
      * addEdge --> Adicionamos uma nova aresta à nossa matriz de adjacência
     */
-    public void addEdge(T origin, T destination, float wheight){
+    public void addEdge(T origin, T destination, float weight){
         Vertice<T> verticeOrigin, verticeDestination; 
         int indexOrigin = getVerticeIndex(origin);
         int indexDestination = getVerticeIndex(destination);
@@ -80,7 +81,7 @@ public class Graph<T>{
 
         // Por fim adicionamos o peso à nossa matriz de adjacência
         // utilizando os índices de origem e destino
-        this.edges[indexOrigin][indexDestination] = wheight;
+        this.edges[indexOrigin][indexDestination] = weight;
     }
 
     /*
@@ -146,10 +147,10 @@ public class Graph<T>{
     }
 
     /*
-     * getWheightsMap --> Retorna um HashMap contendo a "vizinhança" tendo o índice como chave e o peso como valor associado 
+     * getWeightsMap --> Retorna um HashMap contendo a "vizinhança" tendo o índice como chave e o peso como valor associado 
     */
-    public Map<Integer, Float> getWheightsMap(T value){
-        Map<Integer, Float> wheightsMap = new HashMap<Integer, Float>();
+    public Map<Integer, Float> getWeightsMap(T value){
+        Map<Integer, Float> weightsMap = new HashMap<Integer, Float>();
 
         // Laço de repetição que itera sobre j enquanto o mesmo é menor que 
         // o número de itens do nosso grafo.
@@ -158,11 +159,11 @@ public class Graph<T>{
             // e realizamos a verificação se o peso associado é maior que zero:
             // - Caso seja maior: Adicionamos um novo item ao nosso HashMap
             // - Caso não seja: Não fazemos nada
-            if(edges[getVerticeIndex(value)][j] > 0) wheightsMap.put(j, edges[getVerticeIndex(value)][j]);
+            if(edges[getVerticeIndex(value)][j] > 0) weightsMap.put(j, edges[getVerticeIndex(value)][j]);
         }
 
         // Ao fim do programa retornamos o HashMap
-        return wheightsMap;
+        return weightsMap;
     }
 
     /*
@@ -170,18 +171,18 @@ public class Graph<T>{
     */
     public Graph<T> getMST(){
         Integer origin[] = new Integer[this.verticesNum];
-        float wheight[] = new float[this.verticesNum];
+        float weight[] = new float[this.verticesNum];
         Boolean mstSet[] = new Boolean[this.verticesNum];
         Graph<T> graph = new Graph<T>(verticesNum);
 
         // Preenche os arrays com valores "infinitos" e falsos para que 
         // nossas comparações ocorram corretamente
-        Arrays.fill(wheight, 999999999); 
+        Arrays.fill(weight, 999999999); 
         Arrays.fill(mstSet, false);
 
         // Setamos a chave do vértice 0 como 0 para que possamos iniciar com ele
         // e setamos sua origem como -1 já que ele é o primeiro
-        wheight[0] = 0;
+        weight[0] = 0;
         origin[0] = -1;
 
         // Entramos em um laço de repetição para percorremos os vertices
@@ -190,7 +191,7 @@ public class Graph<T>{
             // Buscamos o índice de menor chave com nossa função privada
             // e setamos esse índice como true para marcarmos que 
             // ele já esta presente na nossa árvore
-            Integer u = getMinWheight(wheight, mstSet);
+            Integer u = getMinWeight(weight, mstSet);
             mstSet[u] = true;
 
             // Entramos em mais um laço de repeticação iterando sobre o número de vertices
@@ -198,25 +199,32 @@ public class Graph<T>{
                 // Verificamos primeiro se existe uma aresta entre os vértices,
                 // em seguida garantimos que o vértice não está na nossa árvore geradora mínima e
                 // que o peso da aresta entre os dois vértices é menor que o peso associado ao vertice v
-                if (getEdges()[u][v] != 0 && !mstSet[v] && getEdges()[u][v] < wheight[v]) {
+                if (getEdges()[u][v] != 0 && !mstSet[v] && getEdges()[u][v] < weight[v]) {
                     origin[v] = u; // Define o vértice u como pai do vértice v
-                    wheight[v] = getEdges()[u][v]; // Atualiza a chave do vértice v
+                    weight[v] = getEdges()[u][v]; // Atualiza a chave do vértice v
                 }
             }
 
         }
         
         // Laço de repetição preenchendo um grafo contendo a árvore geradora minima
-        for (int i = 1; i < this.verticesNum; i++){
-            graph.addEdge(vertices.get(origin[i]).getValue(), vertices.get(i).getValue(), getEdges()[i][origin[i]]);
+        for (int i = 1; i < this.verticesNum; i++) {
+            if (origin[i] != null) {
+                graph.addEdge(vertices.get(origin[i]).getValue(), vertices.get(i).getValue(), getEdges()[i][origin[i]]);
+                graph.addEdge(vertices.get(i).getValue(), vertices.get(i).getValue(), getEdges()[i][origin[i]]);
+
+            } else {
+                // Adicionar tratamento para vértices desconexos (opcional)
+                // Por exemplo, você pode querer criar um vértice isolado no grafo
+                graph.addVertice(vertices.get(i).getValue());
+            }
         }
-        
         // Retorno do grafo com a árvore geradora minima
         return graph;
     }
 
-    // getMinwheight --> Retorna o índice do menor peso que ainda não foi visitada
-    private Integer getMinWheight(float wheight[], Boolean mstSet[]){
+    // getMinweight --> Retorna o índice do menor peso que ainda não foi visitada
+    private Integer getMinWeight(float weight[], Boolean mstSet[]){
         float min = 999999999;
         Integer minIndex = -1;
 
@@ -226,14 +234,71 @@ public class Graph<T>{
             // se o peso dele é o menor que o minimo
             // - Caso verdadeiro: Setamos um novo minimo e o índice do valor minimo
             // - Caso não seja: Não fazemos nada
-            if(!mstSet[v] && wheight[v] < min){
-                min = wheight[v];
+            if(!mstSet[v] && weight[v] < min){
+                min = weight[v];
                 minIndex = v;
             }
         }
 
         // Ao fim do programa retornamos o índice do menor peso encontrado
         return minIndex;
+    }
+
+    public HashMap<T, T> getDijkstra(T origin){
+
+        float distances[] = new float[verticesNum];
+        List<T> queueVertice = new ArrayList<T>();
+        List<Float> queueDistance = new ArrayList<Float>();
+        float current_distance, aux_distance;
+        T current_vertice;
+
+        HashMap<T, T> predecessors = new HashMap<T, T>();
+
+        for(int i = 0; i < verticesNum; i++){
+            distances[i] = 999999999;
+        }
+
+        distances[getVerticeIndex(origin)] = 0;
+
+        queueVertice.add(origin);
+        queueDistance.add((float) 0);
+
+        while(queueDistance.size() > 0){
+            current_distance = queueDistance.get(0);
+            current_vertice = queueVertice.get(0);
+
+            queueDistance.remove(0);
+            queueVertice.remove(0);
+
+            if(current_distance <= distances[getVerticeIndex(current_vertice)]){
+                for(Map.Entry<Integer, Float> neighbor : getWeightsMap(current_vertice).entrySet()){
+                    aux_distance = current_distance + neighbor.getValue();
+                    if(aux_distance < distances[neighbor.getKey()]){
+                        distances[neighbor.getKey()] = aux_distance;
+                        predecessors.put(this.vertices.get(neighbor.getKey()).getValue(), current_vertice);
+                        queueDistance.add(aux_distance);
+                        queueVertice.add(this.vertices.get(neighbor.getKey()).getValue());
+                    }
+                }
+            }
+
+        }
+
+        return predecessors;
+    }
+
+    public ArrayList<T> minPath(Map<T, T> predecessors, T start, T end){
+        ArrayList<T> path = new ArrayList<T>();
+        T currentVertice = getVertice(end).getValue();
+        
+        while(!currentVertice.equals(getVertice(start).getValue())){
+            path.add(currentVertice);
+            currentVertice = predecessors.get(currentVertice);
+        }
+
+        path.add(getVertice(start).getValue());
+        Collections.reverse(path);
+        return path;
     }
 
     // printAdjacencyMatrix --> Imprime a matriz de adjacencias do grafo
